@@ -1,17 +1,17 @@
 {
-    "name": "welabs/block-controller",
-    "description": "Block Controller plugin allows you to centrally manage Gutenberg blocks. Enable or disable blocks globally, by user role, or for individual users from a single admin location. Simplify and customize your content creation process effortlessly.",
+    "name": "welabs/block-filterx",
+    "description": "Block FilterX plugin allows you to centrally manage Gutenberg blocks. Enable or disable blocks globally, by user role, or for individual users from a single admin location.",
     "license": "GPL2",
     "autoload": {
         "psr-4": {
-            "WeLabs\\BlockController\\": "includes/"
+            "WeLabs\\BlockFilterx\\": "includes/"
         }
     },
     "authors": [
         {
             "name": "Aminur Islam Arnob",
             "email": "eng.aminurislam@gmail.com",
-            "homepage": "https://wordpress.org/plugins/block-controller/"
+            "homepage": "https://wordpress.org/plugins/block-filterx/"
         }
     ],
     "minimum-stability": "dev",

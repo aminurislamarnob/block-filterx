@@ -7,7 +7,7 @@ set -e
 cd "$(dirname "$0")"
 cd ..
 DIR=$(pwd)
-BUILD_DIR="$DIR/build/block-controller"
+BUILD_DIR="$DIR/build/block-filterx"
 
 # Enable nicer messaging for build status.
 BLUE_BOLD='\033[1;34m'
@@ -43,7 +43,7 @@ status "Generating build... 👷‍♀️"
 
 # Copy all files
 status "Copying files... ✌️"
-FILES=(block-controller.php readme.txt dist includes templates assets languages composer.json composer.lock)
+FILES=(block-filterx.php readme.txt dist includes templates assets languages composer.json composer.lock)
 
 for file in ${FILES[@]}; do
     if [ -f "$file" ] || [ -d "$file" ]; then
@@ -62,10 +62,10 @@ rm composer.json composer.lock
 # go one up, to the build dir
 status "Creating archive... 🎁"
 cd ..
-zip -r -q block-controller.zip block-controller
+zip -r -q block-filterx.zip block-filterx
 
 # remove the source directory
-rm -rf block-controller
+rm -rf block-filterx
 
-success "Done. You've built Block Controller! 🎉 "
-echo -e "\n${BLUE_BOLD}File Path${COLOR_RESET}: ${YELLOW_BOLD}$(pwd)/block-controller.zip${COLOR_RESET} \n"
+success "Done. You've built Block Filterx! 🎉 "
+echo -e "\n${BLUE_BOLD}File Path${COLOR_RESET}: ${YELLOW_BOLD}$(pwd)/block-filterx.zip${COLOR_RESET} \n"

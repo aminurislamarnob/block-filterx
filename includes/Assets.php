@@ -1,6 +1,6 @@
 <?php
 
-namespace WeLabs\BlockController;
+namespace WeLabs\BlockFilterx;
 
 class Assets {
     /**
@@ -34,11 +34,11 @@ class Assets {
      * @return void
      */
     public function register_scripts() {
-        $admin_script       = BLOCK_CONTROLLER_PLUGIN_ASSET . '/admin/script.js';
-        $frontend_script    = BLOCK_CONTROLLER_PLUGIN_ASSET . '/frontend/script.js';
+        $admin_script       = BLOCK_FILTERX_PLUGIN_ASSET . '/admin/script.js';
+        $frontend_script    = BLOCK_FILTERX_PLUGIN_ASSET . '/frontend/script.js';
 
-        wp_register_script( 'block_controller_admin_script', $admin_script, [], filemtime( BLOCK_CONTROLLER_DIR . '/assets/admin/script.js' ), true );
-        wp_register_script( 'block_controller_script', $frontend_script, [], filemtime( BLOCK_CONTROLLER_DIR . '/assets/frontend/script.js' ), true );
+        wp_register_script( 'block_filterx_admin_script', $admin_script, [], filemtime( BLOCK_FILTERX_DIR . '/assets/admin/script.js' ), true );
+        wp_register_script( 'block_filterx_script', $frontend_script, [], filemtime( BLOCK_FILTERX_DIR . '/assets/frontend/script.js' ), true );
     }
 
     /**
@@ -47,11 +47,11 @@ class Assets {
      * @return void
      */
     public function register_styles() {
-        $admin_style       = BLOCK_CONTROLLER_PLUGIN_ASSET . '/admin/style.css';
-        $frontend_style    = BLOCK_CONTROLLER_PLUGIN_ASSET . '/frontend/style.css';
+        $admin_style       = BLOCK_FILTERX_PLUGIN_ASSET . '/admin/style.css';
+        $frontend_style    = BLOCK_FILTERX_PLUGIN_ASSET . '/frontend/style.css';
 
-        wp_register_style( 'block_controller_admin_style', $admin_style, [], filemtime( BLOCK_CONTROLLER_DIR . '/assets/admin/style.css' ) );
-        wp_register_style( 'block_controller_style', $frontend_style, [], filemtime( BLOCK_CONTROLLER_DIR . '/assets/frontend/style.css' ) );
+        wp_register_style( 'block_filterx_admin_style', $admin_style, [], filemtime( BLOCK_FILTERX_DIR . '/assets/admin/style.css' ) );
+        wp_register_style( 'block_filterx_style', $frontend_style, [], filemtime( BLOCK_FILTERX_DIR . '/assets/frontend/style.css' ) );
     }
 
     /**
@@ -60,9 +60,9 @@ class Assets {
      * @return void
      */
     public function enqueue_admin_scripts() {
-        wp_enqueue_script( 'block_controller_admin_script' );
+        wp_enqueue_script( 'block_filterx_admin_script' );
         wp_localize_script(
-            'block_controller_admin_script', 'Block_Controller_Admin', []
+            'block_filterx_admin_script', 'Block_Filterx_Admin', []
         );
     }
 
@@ -72,9 +72,9 @@ class Assets {
      * @return void
      */
     public function enqueue_front_scripts() {
-        wp_enqueue_script( 'block_controller_script' );
+        wp_enqueue_script( 'block_filterx_script' );
         wp_localize_script(
-            'block_controller_script', 'Block_Controller', []
+            'block_filterx_script', 'Block_Filterx', []
         );
     }
 }

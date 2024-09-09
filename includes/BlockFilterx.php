@@ -1,13 +1,13 @@
 <?php
 
-namespace WeLabs\BlockController;
+namespace WeLabs\BlockFilterx;
 
 /**
- * BlockController class
+ * BlockFilterx class
  *
- * @class BlockController The class that holds the entire BlockController plugin
+ * @class BlockFilterx The class that holds the entire BlockFilterx plugin
  */
-final class BlockController {
+final class BlockFilterx {
 
     /**
      * Plugin version
@@ -19,7 +19,7 @@ final class BlockController {
     /**
      * Instance of self
      *
-     * @var BlockController
+     * @var BlockFilterx
      */
     private static $instance = null;
 
@@ -39,7 +39,7 @@ final class BlockController {
      *
      * @var array
      */
-    private const BLOCK_CONTROLLER_DEPENEDENCIES = [
+    private const BLOCK_FILTERX_DEPENEDENCIES = [
         'plugins' => [
             // 'woocommerce/woocommerce.php',
             // 'dokan-lite/dokan.php',
@@ -56,7 +56,7 @@ final class BlockController {
     ];
 
     /**
-     * Constructor for the BlockController class
+     * Constructor for the BlockFilterx class
      *
      * Sets up all the appropriate hooks and actions
      * within our plugin.
@@ -64,20 +64,20 @@ final class BlockController {
     private function __construct() {
         $this->define_constants();
 
-        register_activation_hook( BLOCK_CONTROLLER_FILE, [ $this, 'activate' ] );
-        register_deactivation_hook( BLOCK_CONTROLLER_FILE, [ $this, 'deactivate' ] );
+        register_activation_hook( BLOCK_FILTERX_FILE, [ $this, 'activate' ] );
+        register_deactivation_hook( BLOCK_FILTERX_FILE, [ $this, 'deactivate' ] );
 
         add_action( 'plugins_loaded', [ $this, 'init_plugin' ] );
         add_action( 'woocommerce_flush_rewrite_rules', [ $this, 'flush_rewrite_rules' ] );
     }
 
     /**
-     * Initializes the BlockController() class
+     * Initializes the BlockFilterx() class
      *
-     * Checks for an existing BlockController instance
+     * Checks for an existing BlockFilterx instance
      * and if it doesn't find one then create a new one.
      *
-     * @return BlockController
+     * @return BlockFilterx
      */
     public static function init() {
         if ( self::$instance === null ) {
@@ -108,19 +108,19 @@ final class BlockController {
      * Nothing is being called here yet.
      */
     public function activate() {
-        // Check block_controller dependency plugins
+        // Check block_filterx dependency plugins
         if ( ! $this->check_dependencies() ) {
             wp_die( $this->get_dependency_message() );
         }
 
-        // Rewrite rules during block_controller activation
+        // Rewrite rules during block_filterx activation
         if ( $this->has_woocommerce() ) {
             $this->flush_rewrite_rules();
         }
     }
 
     /**
-     * Flush rewrite rules after block_controller is activated or woocommerce is activated
+     * Flush rewrite rules after block_filterx is activated or woocommerce is activated
      *
      * @since 3.2.8
      */
@@ -142,15 +142,15 @@ final class BlockController {
      * @return void
      */
     public function define_constants() {
-        $this->define( 'BLOCK_CONTROLLER_PLUGIN_VERSION', $this->version );
-        $this->define( 'BLOCK_CONTROLLER_DIR', dirname( BLOCK_CONTROLLER_FILE ) );
-        $this->define( 'BLOCK_CONTROLLER_INC_DIR', BLOCK_CONTROLLER_DIR . '/includes' );
-        $this->define( 'BLOCK_CONTROLLER_TEMPLATE_DIR', BLOCK_CONTROLLER_DIR . '/templates' );
-        $this->define( 'BLOCK_CONTROLLER_PLUGIN_ASSET', plugins_url( 'assets', BLOCK_CONTROLLER_FILE ) );
+        $this->define( 'BLOCK_FILTERX_PLUGIN_VERSION', $this->version );
+        $this->define( 'BLOCK_FILTERX_DIR', dirname( BLOCK_FILTERX_FILE ) );
+        $this->define( 'BLOCK_FILTERX_INC_DIR', BLOCK_FILTERX_DIR . '/includes' );
+        $this->define( 'BLOCK_FILTERX_TEMPLATE_DIR', BLOCK_FILTERX_DIR . '/templates' );
+        $this->define( 'BLOCK_FILTERX_PLUGIN_ASSET', plugins_url( 'assets', BLOCK_FILTERX_FILE ) );
 
         // give a way to turn off loading styles and scripts from parent theme
-        $this->define( 'BLOCK_CONTROLLER_LOAD_STYLE', true );
-        $this->define( 'BLOCK_CONTROLLER_LOAD_SCRIPTS', true );
+        $this->define( 'BLOCK_FILTERX_LOAD_STYLE', true );
+        $this->define( 'BLOCK_FILTERX_LOAD_SCRIPTS', true );
     }
 
     /**
@@ -173,7 +173,7 @@ final class BlockController {
      * @return void
      */
     public function init_plugin() {
-        // Check block_controller dependency plugins
+        // Check block_filterx dependency plugins
         if ( ! $this->check_dependencies() ) {
             add_action( 'admin_notices', [ $this, 'admin_error_notice_for_dependency_missing' ] );
             return;
@@ -182,7 +182,7 @@ final class BlockController {
         $this->includes();
         $this->init_hooks();
 
-        do_action( 'block_controller_loaded' );
+        do_action( 'block_filterx_loaded' );
     }
 
     /**
@@ -212,12 +212,13 @@ final class BlockController {
      */
     public function init_classes() {
         $this->container['scripts'] = new Assets();
+        $this->container['global_block_manager'] = new GlobalBlockManager();
     }
 
     /**
      * Executed after all plugins are loaded
      *
-     * At this point block_controller Pro is loaded
+     * At this point block_filterx Pro is loaded
      *
      * @since 2.8.7
      *
@@ -255,21 +256,21 @@ final class BlockController {
      * @return boolean
      */
     public function check_dependencies() {
-        if ( array_key_exists( 'plugins', self::BLOCK_CONTROLLER_DEPENEDENCIES ) && ! empty( self::BLOCK_CONTROLLER_DEPENEDENCIES['plugins'] ) ) {
-            for ( $plugin_counter = 0; $plugin_counter < count( self::BLOCK_CONTROLLER_DEPENEDENCIES['plugins'] ); $plugin_counter++ ) {
-                if ( ! is_plugin_active( self::BLOCK_CONTROLLER_DEPENEDENCIES['plugins'][ $plugin_counter ] ) ) {
+        if ( array_key_exists( 'plugins', self::BLOCK_FILTERX_DEPENEDENCIES ) && ! empty( self::BLOCK_FILTERX_DEPENEDENCIES['plugins'] ) ) {
+            for ( $plugin_counter = 0; $plugin_counter < count( self::BLOCK_FILTERX_DEPENEDENCIES['plugins'] ); $plugin_counter++ ) {
+                if ( ! is_plugin_active( self::BLOCK_FILTERX_DEPENEDENCIES['plugins'][ $plugin_counter ] ) ) {
                     return false;
                 }
             }
-        } elseif ( array_key_exists( 'classes', self::BLOCK_CONTROLLER_DEPENEDENCIES ) && ! empty( self::BLOCK_CONTROLLER_DEPENEDENCIES['classes'] ) ) {
-            for ( $class_counter = 0; $class_counter < count( self::BLOCK_CONTROLLER_DEPENEDENCIES['classes'] ); $class_counter++ ) {
-                if ( ! class_exists( self::BLOCK_CONTROLLER_DEPENEDENCIES['classes'][ $class_counter ] ) ) {
+        } elseif ( array_key_exists( 'classes', self::BLOCK_FILTERX_DEPENEDENCIES ) && ! empty( self::BLOCK_FILTERX_DEPENEDENCIES['classes'] ) ) {
+            for ( $class_counter = 0; $class_counter < count( self::BLOCK_FILTERX_DEPENEDENCIES['classes'] ); $class_counter++ ) {
+                if ( ! class_exists( self::BLOCK_FILTERX_DEPENEDENCIES['classes'][ $class_counter ] ) ) {
                     return false;
                 }
             }
-        } elseif ( array_key_exists( 'functions', self::BLOCK_CONTROLLER_DEPENEDENCIES ) && ! empty( self::BLOCK_CONTROLLER_DEPENEDENCIES['functions'] ) ) {
-            for ( $func_counter = 0; $func_counter < count( self::BLOCK_CONTROLLER_DEPENEDENCIES['functions'] ); $func_counter++ ) {
-                if ( ! function_exists( self::BLOCK_CONTROLLER_DEPENEDENCIES['functions'][ $func_counter ] ) ) {
+        } elseif ( array_key_exists( 'functions', self::BLOCK_FILTERX_DEPENEDENCIES ) && ! empty( self::BLOCK_FILTERX_DEPENEDENCIES['functions'] ) ) {
+            for ( $func_counter = 0; $func_counter < count( self::BLOCK_FILTERX_DEPENEDENCIES['functions'] ); $func_counter++ ) {
+                if ( ! function_exists( self::BLOCK_FILTERX_DEPENEDENCIES['functions'][ $func_counter ] ) ) {
                     return false;
                 }
             }
@@ -284,7 +285,7 @@ final class BlockController {
      * @return void
      */
     protected function get_dependency_message() {
-        return __( 'Block Controller plugin is enabled but not effective. It requires dependency plugins to work.', 'block-controller' );
+        return __( 'Block Filterx plugin is enabled but not effective. It requires dependency plugins to work.', 'block-filterx' );
     }
 
     /**
@@ -303,7 +304,7 @@ final class BlockController {
 	 * @return string
 	 */
 	public function plugin_url() {
-		return untrailingslashit( plugins_url( '/', BLOCK_CONTROLLER_FILE ) );
+		return untrailingslashit( plugins_url( '/', BLOCK_FILTERX_FILE ) );
 	}
 
     /**
@@ -313,8 +314,8 @@ final class BlockController {
      * @return string
      */
     public function get_template( $name ) {
-        $template = untrailingslashit( BLOCK_CONTROLLER_TEMPLATE_DIR ) . '/' . untrailingslashit( $name );
+        $template = untrailingslashit( BLOCK_FILTERX_TEMPLATE_DIR ) . '/' . untrailingslashit( $name );
 
-        return apply_filters( 'block-controller_template', $template, $name );
+        return apply_filters( 'block-filterx_template', $template, $name );
     }
 }
