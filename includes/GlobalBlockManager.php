@@ -1,6 +1,6 @@
 <?php
 
-namespace WeLabs\BlockController;
+namespace WeLabs\BlockFilterx;
 
 class GlobalBlockManager {
     /**
