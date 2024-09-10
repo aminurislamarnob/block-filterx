@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Block Filterx
+ * Plugin Name: Block FilterX
  * Plugin URI:  https://wordpress.org/plugins/block-filterx/
  * Description: Block FilterX plugin allows you to centrally manage Gutenberg blocks. Enable or disable blocks globally, by user role, or for individual users from a single admin location.
  * Version: 0.0.1
