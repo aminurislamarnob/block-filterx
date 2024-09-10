@@ -7,7 +7,7 @@ import { registerCoreBlocks } from '@wordpress/block-library';
 import { getBlockTypes } from '@wordpress/blocks';
 import { getBlocksData } from '../functions/blocks';
 
-const OrderSettings = () => {
+const UserRoleSpecificSettings = () => {
 	const [ productPerPage, setProductPerPage ] = useState( '' );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ message, setMessage ] = useState( '' );
@@ -124,4 +124,4 @@ const OrderSettings = () => {
 	);
 };
 
-export default OrderSettings;
+export default UserRoleSpecificSettings;

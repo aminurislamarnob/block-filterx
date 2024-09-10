@@ -1,16 +1,14 @@
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from 'react';
-import { Button, Card, CardBody, Notice, Spinner, SelectControl } from '@wordpress/components';
+import { Button, Card, CardBody, Notice, TextControl, Spinner } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 
-const GeneralSettings = () => {
-	const [ pages, setPages ] = useState( [] );
-	const [ dashboardPage, setDashboardPage ] = useState( '' );
+const UserSpecificSettings = () => {
+	const [ productPerPage, setProductPerPage ] = useState( '' );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ message, setMessage ] = useState( '' );
 	const [ error, setError ] = useState( '' );
 
-	// Fetch plugin settings.
 	useEffect(() => {
 		setIsLoading( true );
         const fetchSettings = async () => {
@@ -19,8 +17,8 @@ const GeneralSettings = () => {
                     path: '/msf-shop-front/v1/settings',
                 });
 
-				if( response.msf_dashboard_page_id ){
-                	setDashboardPage(response.msf_dashboard_page_id);
+                if( response.msf_dashboard_page_id ){
+                	setProductPerPage(response.msf_dashboard_page_id);
 				}
                 setError(null); // Clear any previous errors
 				setIsLoading( false );
@@ -32,49 +30,19 @@ const GeneralSettings = () => {
 
         fetchSettings();
     }, []);
-	
-	// Fetch 100 pages.
-	useEffect(() => {
-		setIsLoading( true );
-        const fetchPages = async () => {
-            try {
-                const pages = await apiFetch({
-                    path: '/wp/v2/pages?per_page=100&page=1',
-                });
 
-				// Map the pages to the options format required by SelectControl
-				const options = pages.map((page) => ({
-					label: page.title.rendered,
-					value: page.id,
-				}));
-
-				options.unshift({ value: '', label: __( 'Select dashboard page', 'shop-front' ), disabled: true });
-				
-                setPages(options);
-                setError(null); // Clear any previous errors
-				setIsLoading( false );
-            } catch (err) {
-                setError( err.message );
-				setIsLoading( false );
-            }
-        };
-
-        fetchPages();
-    }, []);
-
-	// Handle submit to save dashboard page
 	const handleSubmit = async ( event ) => {
 		event.preventDefault();
 		setIsLoading( true );
 		try {
-			const { msf_dashboard_page_id } = await apiFetch( {
+			const { msf_product_per_page } = await apiFetch( {
 				path: '/msf-shop-front/v1/settings',
 				method: 'POST',
 				data: {
-					msf_dashboard_page_id: dashboardPage,
+					msf_product_per_page: productPerPage,
 				},
 			} );
-			setDashboardPage( msf_dashboard_page_id );
+			setProductPerPage( msf_product_per_page );
 			setMessage(
 				__( 'Settings saved successfully!', 'shop-front' )
 			);
@@ -97,7 +65,7 @@ const GeneralSettings = () => {
 						<path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/>
 					</svg>
 				</div>
-				<h2>{ __( 'General Settings', 'shop-front' ) }</h2>
+				<h2>{ __( 'Appearance', 'shop-front' ) }</h2>
 			</div>
 			{ message && (
 				<Notice
@@ -123,11 +91,11 @@ const GeneralSettings = () => {
 			<form onSubmit={ handleSubmit }>
 				<Card>
 					<CardBody>
-						<SelectControl
-							label="Select Dashboard Page"
-							value={ dashboardPage }
-							options={ pages }
-							onChange={ ( page ) => setDashboardPage( page ) }
+						<TextControl
+							label={ __( 'Product per page', 'shop-front' ) }
+							help={ __( 'Default: 10', 'shop-front' ) }
+							value={ productPerPage }
+							onChange={ setProductPerPage }
 						/>
 						<Button variant="primary" type="submit" disabled={ isLoading }>
 							{ isLoading && <Spinner /> }
@@ -140,4 +108,4 @@ const GeneralSettings = () => {
 	);
 };
 
-export default GeneralSettings;
+export default UserSpecificSettings;

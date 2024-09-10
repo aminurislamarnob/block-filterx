@@ -8,19 +8,17 @@ import {
 import './styles/styles.css';
 import './styles/index.scss'; // Include your custom Sass styles
 import Layout from './Components/Layout';
-import OrderSettings from './Components/OrderSettings';
-import AppearanceSettings from './Components/AppearanceSettings';
-import GeneralSettings from './Components/GeneralSettings';
-import ProductSettings from './Components/ProductSettings';
+import GlobalSettings from './Components/GlobalSettings';
+import UserRoleSpecificSettings from './Components/UserRoleSpecificSettings';
+import UserSpecificSettings from './Components/UserSpecificSettings';
 
 const App = () => (
 	<Router>
 		<Routes>
 			<Route path="/" element={ <Layout /> }>
-                <Route index element={ <GeneralSettings /> } />
-                <Route path="appearance-settings" element={ <AppearanceSettings /> } />
-                <Route path="product-settings" element={ <ProductSettings /> } />
-                <Route path="order-settings" element={ <OrderSettings /> } />
+                <Route index element={ <GlobalSettings /> } />
+                <Route path="user-role-specific-settings" element={ <UserRoleSpecificSettings /> } />
+                <Route path="user-specific-settings" element={ <UserSpecificSettings /> } />
                 {/* Add more routes here */}
             </Route>
 		</Routes>
