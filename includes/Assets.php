@@ -61,8 +61,22 @@ class Assets {
 	 */
 	public function enqueue_admin_scripts() {
 		$page = get_current_screen();
-		// if ( 'woocommerce_page_shop-front' === $page->id ) {
+		if ( 'settings_page_block-filterx' === $page->id ) {
 			$asset_file = include BLOCK_FILTERX_DIR . '/assets/build/admin/script.asset.php';
+
+			// Preload server-registered block schemas.
+			wp_add_inline_script(
+				'wp-blocks',
+				'wp.blocks.unstable__bootstrapServerSideBlockDefinitions(' . wp_json_encode( get_block_editor_server_block_settings() ) . ');'
+			);
+
+			// Enqueues registered block scripts.
+			$block_registry = \WP_Block_Type_Registry::get_instance();
+			foreach ( $block_registry->get_all_registered() as $block_name => $block_type ) {
+				if ( ! empty( $block_type->editor_script ) ) {
+					wp_enqueue_script( $block_type->editor_script );
+				}
+			}
 
 			wp_enqueue_script(
 				'shop-front-admin-page',
@@ -80,7 +94,7 @@ class Assets {
 			);
 
 			wp_enqueue_style( 'wp-components' );
-		// }
+		}
 
 		// wp_enqueue_script( 'block_filterx_admin_script' );
 		// wp_localize_script(
