@@ -27,7 +27,7 @@ class GlobalBlockManager {
 
 		// Log the block names and icons
 
-		error_log( wp_json_encode( count( $registered_blocks ) ) );
+		// error_log( wp_json_encode( count( $registered_blocks ) ) );
 	}
 
 	private function get_block_icon( $block_type ) {
