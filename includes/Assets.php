@@ -79,15 +79,24 @@ class Assets {
 			}
 
 			wp_enqueue_script(
-				'shop-front-admin-page',
+				'block-filterx-admin-page',
 				BLOCK_FILTERX_PLUGIN_ASSET . '/build/admin/script.js',
 				$asset_file['dependencies'],
 				$asset_file['version'],
 				true
 			);
 
+			// Localize Scripts.
+			wp_localize_script(
+				'block-filterx-admin-page',
+				'block_filterx_localize',
+				array(
+					'blockDisabledByFilter' => apply_filters( 'block_filterx_disabled_blocks', array() ),
+				)
+			);
+
 			wp_enqueue_style(
-				'shop-front-admin-styles',
+				'block-filterx-admin-styles',
 				BLOCK_FILTERX_PLUGIN_ASSET . '/build/admin.css',
 				array( 'wp-components' ),
 				$asset_file['version'] ?? null,

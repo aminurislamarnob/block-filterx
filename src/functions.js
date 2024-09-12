@@ -1,3 +1,5 @@
+import { getCategories } from '@wordpress/blocks';
+
 export const excludedBlocks = [
 	'core/missing',
 	'core/text-columns',
@@ -87,4 +89,25 @@ export function getAllBlocksAndVariations(blocks) {
 		}
 	});
 	return WPBlocks;
+}
+
+/**
+ * Get all Guten block categories.
+ *
+ * @return {Array} The array of categories.
+ */
+export function getCategoryData() {
+	let blockCategories = [];
+	const categories = getCategories();
+
+	if (categories?.length) {
+		blockCategories = categories;
+
+		// Remove `reusable` categories.
+		blockCategories = blockCategories.filter((cat) => {
+			return cat.slug !== 'reusable';
+		});
+	}
+
+	return blockCategories;
 }

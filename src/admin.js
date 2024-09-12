@@ -11,19 +11,37 @@ import Layout from './Components/Layout';
 import GlobalSettings from './Components/GlobalSettings';
 import UserRoleSpecificSettings from './Components/UserRoleSpecificSettings';
 import UserSpecificSettings from './Components/UserSpecificSettings';
+import { registerCoreBlocks } from '@wordpress/block-library';
+import { getBlockTypes } from '@wordpress/blocks';
+import { getBlocksData, getCategoryData } from './functions';
 
-const App = () => (
-	<Router>
-		<Routes>
-			<Route path="/" element={ <Layout /> }>
-                <Route index element={ <GlobalSettings /> } />
-                <Route path="user-role-specific-settings" element={ <UserRoleSpecificSettings /> } />
-                <Route path="user-specific-settings" element={ <UserSpecificSettings /> } />
-                {/* Add more routes here */}
-            </Route>
-		</Routes>
-	</Router>
-);
+const App = () => {
+	const { blockDisabledByFilter = [] } = block_filterx_localize;
+    registerCoreBlocks();
+    const blockTypes = getBlockTypes();
+	const categories = getCategoryData();
+
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<Layout />}>
+                    <Route
+                        index
+                        element={<GlobalSettings gutenBlocks={getBlocksData(blockTypes, blockDisabledByFilter)} gutenCategories={categories} />}
+                    />
+                    <Route
+                        path="user-role-specific-settings"
+                        element={<UserRoleSpecificSettings />}
+                    />
+                    <Route
+                        path="user-specific-settings"
+                        element={<UserSpecificSettings />}
+                    />
+                </Route>
+            </Routes>
+        </Router>
+    );
+};
 
 document.addEventListener( 'DOMContentLoaded', () => {
 	const container = document.getElementById(

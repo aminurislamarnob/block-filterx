@@ -5,7 +5,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { Icon } from '@wordpress/components';
 import { registerCoreBlocks } from '@wordpress/block-library';
 import { getBlockTypes } from '@wordpress/blocks';
-import { getBlocksData } from '../functions/blocks';
+import { getBlocksData } from '../functions';
 
 const UserRoleSpecificSettings = () => {
 	const [ productPerPage, setProductPerPage ] = useState( '' );
