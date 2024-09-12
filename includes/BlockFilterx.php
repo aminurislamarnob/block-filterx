@@ -69,6 +69,7 @@ final class BlockFilterx {
 
 		add_action( 'plugins_loaded', array( $this, 'init_plugin' ) );
 		add_action( 'woocommerce_flush_rewrite_rules', array( $this, 'flush_rewrite_rules' ) );
+		add_action( 'rest_api_init', array( $this, 'register_rest_route' ) );
 	}
 
 	/**
@@ -112,6 +113,15 @@ final class BlockFilterx {
 		if ( $this->has_woocommerce() ) {
 			$this->flush_rewrite_rules();
 		}
+	}
+
+	/**
+	 * Register plugin REST routes
+	 *
+	 * @return void
+	 */
+	public function register_rest_route() {
+		$this->container['block_filterx_settings_controller']->register_routes();
 	}
 
 	/**
@@ -203,6 +213,7 @@ final class BlockFilterx {
 		$this->container['scripts']              = new Assets();
 		$this->container['admin_settings']       = new Admin\Settings();
 		$this->container['global_block_manager'] = new GlobalBlockManager();
+		$this->container['block_filterx_settings_controller'] = new REST\GlobalBlockController();
 	}
 
 	/**

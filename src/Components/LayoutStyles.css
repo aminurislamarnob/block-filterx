@@ -143,3 +143,23 @@
 .toggle-gap-0 .components-flex {
     gap: 0;
 }
+.block-filterx-switch .components-form-toggle .components-form-toggle__track {
+    border-color: #ddd;
+}
+
+.block-filterx-switch .components-form-toggle .components-form-toggle__thumb {
+    background-color: #ddd;
+}
+.block-filterx-switch .components-form-toggle.is-checked .components-form-toggle__track {
+    background-color: #f56640;
+    border-color: #f56640;
+}
+.block-filterx-switch .components-form-toggle.is-checked .components-form-toggle__thumb{
+    background-color: #fff;
+}
+.block-filterx-switch .components-form-toggle .components-form-toggle__input:focus+.components-form-toggle__track{
+    box-shadow: none;
+}
+.block-loading{
+    pointer-events: none;
+}
