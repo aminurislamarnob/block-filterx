@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, Fragment } from 'react';
-import { Button, Card, CardBody, Notice, TextControl, Spinner, __experimentalGrid as Grid } from '@wordpress/components';
+import { Spinner, __experimentalGrid as Grid } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { Icon } from '@wordpress/components';
 import { registerCoreBlocks } from '@wordpress/block-library';
@@ -9,7 +9,11 @@ import { getBlocksData, getCategoryData } from '../functions';
 import GutenBlock from './GutenBlock';
 
 const GlobalSettings = ({gutenBlocks, gutenCategories}) => {
+	const [ isLoading, setIsLoading ] = useState( false );
+	const [ message, setMessage ] = useState( '' );
+    const [ error, setError ] = useState( '' );
 	const [blocks, setBlocks] = useState([]);
+	const [disabledBlocks, setDisabledBlocks] = useState([]);
 
 	/**
 	 * Organize Blocks By Category
@@ -28,12 +32,27 @@ const GlobalSettings = ({gutenBlocks, gutenCategories}) => {
 			};
 		});
 		setBlocks(data);
-
-		
 	}
+
+	// Fetch globally disabled blocks.
+	const fetchGloballyDisabledBlocks = async () => {
+		setIsLoading( true );
+		try {
+			const response = await apiFetch({
+				path: '/block-filterx/v1/global-disabled-block',
+			});
+			setDisabledBlocks(response);
+			setError(null); // Clear any previous errors
+			setIsLoading( false );
+		} catch (err) {
+			setError( err.message );
+			setIsLoading( false );
+		}
+	};
 	
     useEffect(() => {
 		organizeBlocks();
+		fetchGloballyDisabledBlocks();
     }, []);
 	
 	return (
@@ -47,15 +66,25 @@ const GlobalSettings = ({gutenBlocks, gutenCategories}) => {
 				</div>
 				<h2>{ __( 'Enable/Disable Block Globally', 'shop-front' ) }</h2>
 			</div>
-			<div>
-			{!!blocks?.length &&
+			<div className='relative'>
+			{ isLoading && 
+                <div className='z-50 absolute left-0 right-0 top-0 bottom-0 bg-[#000000d1] rounded-md flex items-center justify-center'>
+                    <Spinner className='block-in-progress'
+                        style={{
+                            height: '40px',
+                            width: '40px'
+                        }}
+                    />
+                </div>
+            }
+			{!isLoading && !!blocks?.length &&
 				blocks.map((category) => (
 					<Fragment key={category.info.slug}>
 						<h4 className='mb-4 text-lg'><strong>{category.info.title}</strong></h4>
 						<Grid columns={ 6 } className={'mb-6'}>
 						{!!category?.blocks?.length && category.blocks.map((block) => (
 							<Fragment key={block.name}>
-								<GutenBlock blockData={block} />
+								<GutenBlock blockData={block} disabledBlocks={disabledBlocks} />
 							</Fragment>
 						))}
 						</Grid>

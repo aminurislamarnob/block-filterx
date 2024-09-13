@@ -5,11 +5,18 @@ import { ToggleControl, Spinner } from '@wordpress/components';
 import BlockIcon from './BlockIcon';
 import Alert from './Alert';
 
-const GutenBlock = ({ blockData }) => {
+const GutenBlock = ({ blockData, disabledBlocks }) => {
     const [ value, setValue ] = useState( true );
     const [ isLoading, setIsLoading ] = useState( false );
 	const [ message, setMessage ] = useState( '' );
     const [ error, setError ] = useState( '' );
+
+    // Check if block is disabled initially
+    useEffect(() => {
+        if (disabledBlocks.includes(blockData.name)) {
+            setValue(false);
+        }
+    }, [disabledBlocks, blockData.name]);
 
     // Handle toggle change and submit
     const handleToggleChange = async () => {
