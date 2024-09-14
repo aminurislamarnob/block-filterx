@@ -83,12 +83,22 @@ class GlobalBlockController extends WP_REST_Controller {
 	public function update_global_disable_block( $request ) {
 		$global_disabled_blocks = get_option( 'block_filterx_global_disabled_blocks', array() );
 
-		// Check if the 'block_name' parameter is provided
+		// Check if the 'block_name' parameter is provided.
 		if ( $request->has_param( 'block_name' ) ) {
 			$block_name = sanitize_text_field( $request->get_param( 'block_name' ) );
 
-			// Append the block name if it's not already in the array
-			if ( ! in_array( $block_name, $global_disabled_blocks, true ) ) {
+			if ( in_array( $block_name, $global_disabled_blocks, true ) ) {
+				$global_disabled_blocks = array_filter(
+					$global_disabled_blocks,
+					function ( $item ) use ( $block_name ) {
+						return $item !== $block_name;
+					}
+				);
+
+				// Re-index the array to avoid gaps in the keys.
+				$global_disabled_blocks = array_values( $global_disabled_blocks );
+			} else {
+				// Add the block name if it's not already in the array.
 				$global_disabled_blocks[] = $block_name;
 			}
 		}
@@ -96,7 +106,7 @@ class GlobalBlockController extends WP_REST_Controller {
 		if ( ! update_option( 'block_filterx_global_disabled_blocks', $global_disabled_blocks ) ) {
 			return new WP_Error( 'update_failed', __( 'Failed to update the settings', 'shop-front' ), array( 'status' => 500 ) );
 		}
-	
+
 		return $this->get_global_disabled_blocks( $request );
 	}
 
@@ -135,7 +145,7 @@ class GlobalBlockController extends WP_REST_Controller {
 					'description' => __( 'Disable Block Name', 'shop-front' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
-				)
+				),
 			),
 		);
 	}

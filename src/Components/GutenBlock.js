@@ -6,7 +6,7 @@ import BlockIcon from './BlockIcon';
 import Alert from './Alert';
 
 const GutenBlock = ({ blockData, disabledBlocks }) => {
-    const [ value, setValue ] = useState( true );
+    const [ isEnabled, setIsEnabled ] = useState( true );
     const [ isLoading, setIsLoading ] = useState( false );
 	const [ message, setMessage ] = useState( '' );
     const [ error, setError ] = useState( '' );
@@ -14,13 +14,13 @@ const GutenBlock = ({ blockData, disabledBlocks }) => {
     // Check if block is disabled initially
     useEffect(() => {
         if (disabledBlocks.includes(blockData.name)) {
-            setValue(false);
+            setIsEnabled(false);
         }
     }, [disabledBlocks, blockData.name]);
 
     // Handle toggle change and submit
     const handleToggleChange = async () => {
-        setValue((state) => !state);
+        setIsEnabled((state) => !state);
         setIsLoading( true );
 		try {
 			const response = await apiFetch( {
@@ -30,9 +30,16 @@ const GutenBlock = ({ blockData, disabledBlocks }) => {
 					block_name: blockData.name,
 				},
 			} );
-			setMessage(
-				__( 'Settings saved successfully!', 'shop-front' )
-			);
+
+            if( isEnabled ){
+                setMessage(
+                    __( 'Block successfully enabled!', 'shop-front' )
+                );
+            }else{
+                setMessage(
+                    __( 'Block successfully disabled!', 'shop-front' )
+                );
+            }
 			setError( '' );
 			setIsLoading( false );
 		} catch (error) {
@@ -59,7 +66,7 @@ const GutenBlock = ({ blockData, disabledBlocks }) => {
                 <h5 className='mb-2'>{blockData.title}</h5>
                 <ToggleControl
                     __nextHasNoMarginBottom
-                    checked={ value }
+                    checked={ isEnabled }
                     label=""
                     className='toggle-gap-0 block-filterx-switch'
                     onChange={ handleToggleChange }
