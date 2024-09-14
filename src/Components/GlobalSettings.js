@@ -2,15 +2,10 @@ import { __ } from '@wordpress/i18n';
 import { useState, useEffect, Fragment } from 'react';
 import { Spinner, __experimentalGrid as Grid } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
-import { Icon } from '@wordpress/components';
-import { registerCoreBlocks } from '@wordpress/block-library';
-import { getBlockTypes } from '@wordpress/blocks';
-import { getBlocksData, getCategoryData } from '../functions';
 import GutenBlock from './GutenBlock';
 
 const GlobalSettings = ({gutenBlocks, gutenCategories}) => {
 	const [ isLoading, setIsLoading ] = useState( false );
-	const [ message, setMessage ] = useState( '' );
     const [ error, setError ] = useState( '' );
 	const [blocks, setBlocks] = useState([]);
 	const [disabledBlocks, setDisabledBlocks] = useState([]);
