@@ -4,6 +4,8 @@ import apiFetch from '@wordpress/api-fetch';
 import { ToggleControl, Spinner } from '@wordpress/components';
 import BlockIcon from './BlockIcon';
 import Alert from './Alert';
+import { useDispatch, useSelect } from '@wordpress/data';
+import store from '../store';
 
 const GutenBlock = ({ blockData, disabledBlocks }) => {
     const [ isEnabled, setIsEnabled ] = useState( true );
@@ -11,17 +13,21 @@ const GutenBlock = ({ blockData, disabledBlocks }) => {
 	const [ message, setMessage ] = useState( '' );
     const [ error, setError ] = useState( '' );
 
+    // Dispatch actions to the store
+	const { updateDisabledBlocks } = useDispatch('block-filterx/store');
+
     // Check if block is disabled initially
     useEffect(() => {
-        if (disabledBlocks.includes(blockData.name)) {
+        if (disabledBlocks.some((block) => block.name === blockData.name)) {
             setIsEnabled(false);
         }
     }, [disabledBlocks, blockData.name]);
-
+    
     // Handle toggle change and submit
     const handleToggleChange = async () => {
         setIsEnabled((state) => !state);
         setIsLoading( true );
+
 		try {
 			const response = await apiFetch( {
 				path: '/block-filterx/v1/global-disabled-block',
@@ -31,15 +37,19 @@ const GutenBlock = ({ blockData, disabledBlocks }) => {
 				},
 			} );
 
-            if( isEnabled ){
-                setMessage(
-                    __( 'Block successfully enabled!', 'shop-front' )
-                );
-            }else{
+            // Update store disabled block
+            updateDisabledBlocks(blockData.category, response);
+
+            if(response.includes(blockData.name)){
                 setMessage(
                     __( 'Block successfully disabled!', 'shop-front' )
                 );
+            }else{
+                setMessage(
+                    __( 'Block successfully enabled!', 'shop-front' )
+                );
             }
+            
 			setError( '' );
 			setIsLoading( false );
 		} catch (error) {
@@ -47,6 +57,7 @@ const GutenBlock = ({ blockData, disabledBlocks }) => {
 			setMessage( '' );
 			setIsLoading( false );
 		}
+        // console.log(isEnabled);
     };
     
 	return (

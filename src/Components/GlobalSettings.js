@@ -3,12 +3,21 @@ import { useState, useEffect, Fragment } from 'react';
 import { Spinner, __experimentalGrid as Grid } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import GutenBlock from './GutenBlock';
+import CategoryHeader from './CategoryHeader';
+import { useDispatch, useSelect } from '@wordpress/data';
+import store from '../store';
 
 const GlobalSettings = ({gutenBlocks, gutenCategories}) => {
-	const [ isLoading, setIsLoading ] = useState( false );
+	const [ isDisabledBlocksLoaded, setIsDisabledBlocksLoaded ] = useState(false);
+    const [ isOrganizingedBlocks, setIsOrganizingedBlocks ] = useState(false);
     const [ error, setError ] = useState( '' );
-	const [blocks, setBlocks] = useState([]);
 	const [disabledBlocks, setDisabledBlocks] = useState([]);
+
+	 // Dispatch actions to the store
+	 const { setCategoryWiseBlocks } = useDispatch('block-filterx/store');
+
+	 // Select state from the store
+	 const getCategoryWiseBlocks = useSelect((select) => select('block-filterx/store').getCategoryWiseBlocks(), []);
 
 	/**
 	 * Organize Blocks By Category
@@ -18,37 +27,44 @@ const GlobalSettings = ({gutenBlocks, gutenCategories}) => {
 			return false;
 		}
 
+		setIsOrganizingedBlocks(false);
 		const data = gutenCategories.map(function (category) {
+			const categoryBlocks = gutenBlocks.filter((block) => block.category === category.slug);
 			return {
 				info: category,
-				blocks: gutenBlocks.filter(function (block) {
-					return block.category === category.slug;
-				}),
+				blocks: categoryBlocks,
+				disabledBlocks: categoryBlocks.filter((block) => disabledBlocks.includes(block.name)),
 			};
 		});
-		setBlocks(data);
+		setCategoryWiseBlocks(data); // Set blocks category wise to global store.
+		setIsOrganizingedBlocks(true);
 	}
 
 	// Fetch globally disabled blocks.
 	const fetchGloballyDisabledBlocks = async () => {
-		setIsLoading( true );
+		setIsDisabledBlocksLoaded(false); 
 		try {
 			const response = await apiFetch({
 				path: '/block-filterx/v1/global-disabled-block',
 			});
 			setDisabledBlocks(response);
 			setError(null); // Clear any previous errors
-			setIsLoading( false );
+			setIsDisabledBlocksLoaded(true);
 		} catch (err) {
 			setError( err.message );
-			setIsLoading( false );
+			setIsDisabledBlocksLoaded(true);
 		}
 	};
 	
     useEffect(() => {
-		organizeBlocks();
 		fetchGloballyDisabledBlocks();
     }, []);
+
+    useEffect(() => {
+		organizeBlocks();
+    }, [gutenBlocks, gutenCategories, disabledBlocks]);
+
+	const isBlockReadyToDisplay = isDisabledBlocksLoaded && isOrganizingedBlocks;
 	
 	return (
 		<div>
@@ -62,7 +78,7 @@ const GlobalSettings = ({gutenBlocks, gutenCategories}) => {
 				<h2>{ __( 'Enable/Disable Block Globally', 'shop-front' ) }</h2>
 			</div>
 			<div className='relative'>
-			{ isLoading && 
+			{ !isBlockReadyToDisplay && 
                 <div className='z-50 absolute left-0 right-0 top-0 bottom-0 bg-[#000000d1] rounded-md flex items-center justify-center'>
                     <Spinner className='block-in-progress'
                         style={{
@@ -72,14 +88,14 @@ const GlobalSettings = ({gutenBlocks, gutenCategories}) => {
                     />
                 </div>
             }
-			{!isLoading && !!blocks?.length &&
-				blocks.map((category) => (
+			{isBlockReadyToDisplay && !!getCategoryWiseBlocks?.length &&
+				getCategoryWiseBlocks.map((category) => (
 					<Fragment key={category.info.slug}>
-						<h4 className='mb-4 text-lg'><strong>{category.info.title}</strong></h4>
+						<CategoryHeader category={category}/>
 						<Grid columns={ 6 } className={'mb-6'}>
 						{!!category?.blocks?.length && category.blocks.map((block) => (
 							<Fragment key={block.name}>
-								<GutenBlock blockData={block} disabledBlocks={disabledBlocks} />
+								<GutenBlock blockData={block} disabledBlocks={category.disabledBlocks} />
 							</Fragment>
 						))}
 						</Grid>
