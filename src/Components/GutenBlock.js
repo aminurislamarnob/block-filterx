@@ -3,9 +3,9 @@ import { useState, Fragment, useEffect } from 'react';
 import apiFetch from '@wordpress/api-fetch';
 import { ToggleControl, Spinner } from '@wordpress/components';
 import BlockIcon from './BlockIcon';
-import Alert from './Alert';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import store from '../store';
+import { triggerNotification } from '../store';
 
 const GutenBlock = ({ blockData, disabledBlocks }) => {
     const [ isEnabled, setIsEnabled ] = useState( true );
@@ -14,7 +14,7 @@ const GutenBlock = ({ blockData, disabledBlocks }) => {
     const [ error, setError ] = useState( '' );
 
     // Dispatch actions to the store
-	const { updateDisabledBlocks } = useDispatch('block-filterx/store');
+	const { updateDisabledBlocks, setNotification } = useDispatch('block-filterx/store');
 
     // Check if block is disabled initially
     useEffect(() => {
@@ -41,37 +41,23 @@ const GutenBlock = ({ blockData, disabledBlocks }) => {
             updateDisabledBlocks(blockData.category, response);
 
             if(response.includes(blockData.name)){
-                setMessage(
-                    __( 'Block successfully disabled!', 'shop-front' )
-                );
+                triggerNotification(setNotification, 'success', __('Block successfully disabled!', 'shop-front'));
             }else{
-                setMessage(
-                    __( 'Block successfully enabled!', 'shop-front' )
-                );
+                triggerNotification(setNotification, 'success', __('Block successfully enabled!', 'shop-front'));
             }
-            
+
 			setError( '' );
 			setIsLoading( false );
 		} catch (error) {
 			setError( error.message );
-			setMessage( '' );
 			setIsLoading( false );
+            triggerNotification(setNotification, 'error', __('Error disabling block!', 'shop-front'));
 		}
         // console.log(isEnabled);
     };
     
 	return (
         <Fragment>
-            <Alert
-                status="success"
-                message={message}
-                onDismiss={() => setMessage('')}
-            />
-            <Alert
-                status="error"
-                message={error}
-                onDismiss={() => setError('')}
-            />
             <div className={`border border-[#e0e4e9] rounded-md p-2.5 flex flex-col items-center bg-[#f0f0f0] relative ${isLoading ? 'block-loading' : ''}`}>
                 <BlockIcon icon={blockData.icon} />
                 <h5 className='mb-2'>{blockData.title}</h5>

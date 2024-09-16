@@ -6,6 +6,7 @@ import GutenBlock from './GutenBlock';
 import CategoryHeader from './CategoryHeader';
 import { useDispatch, useSelect } from '@wordpress/data';
 import store from '../store';
+import Alert from './Alert';
 
 const GlobalSettings = ({gutenBlocks, gutenCategories}) => {
 	const [ isDisabledBlocksLoaded, setIsDisabledBlocksLoaded ] = useState(false);
@@ -13,11 +14,13 @@ const GlobalSettings = ({gutenBlocks, gutenCategories}) => {
     const [ error, setError ] = useState( '' );
 	const [disabledBlocks, setDisabledBlocks] = useState([]);
 
-	 // Dispatch actions to the store
-	 const { setCategoryWiseBlocks } = useDispatch('block-filterx/store');
+	// Dispatch actions to the store
+	const { setCategoryWiseBlocks, clearNotification } = useDispatch('block-filterx/store');
 
-	 // Select state from the store
-	 const getCategoryWiseBlocks = useSelect((select) => select('block-filterx/store').getCategoryWiseBlocks(), []);
+	// Select state from the store
+	const getCategoryWiseBlocks = useSelect((select) => select('block-filterx/store').getCategoryWiseBlocks(), []);
+	const getNotification = useSelect((select) => select('block-filterx/store').getNotification(), []);
+	
 
 	/**
 	 * Organize Blocks By Category
@@ -68,6 +71,13 @@ const GlobalSettings = ({gutenBlocks, gutenCategories}) => {
 	
 	return (
 		<div>
+			{ getNotification.status === true &&
+				<Alert
+					status={getNotification.type}
+					message={getNotification.message}
+					onDismiss={() => clearNotification()}
+				/>
+			}
 			<div className='settings-header'>
 				<div className='settings-header-icon'>
 					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-gear" viewBox="0 0 16 16">
