@@ -8,6 +8,8 @@ composer update
 
 ### Gutenberg Dev Part
 ```
+nvm use 20 // Use node version >=20
+npm install // Install node modules
 npm run start // To start development server.
 npm run build // To build for production
 ```
